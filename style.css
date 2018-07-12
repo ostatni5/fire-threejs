@@ -1,0 +1,13 @@
+﻿ body{
+            margin:0;
+            padding:0;
+            font-family:Arial;
+            overflow:hidden;
+            height:100%;
+            color:white;
+        }
+ #kamera{
+     position: fixed ;
+     top:10px;
+     right:10px;
+ }

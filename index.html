@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="libs/three.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <link href="style.css" rel="stylesheet" /> 
+    <style>
+        #info{
+            width:100%;
+            position:fixed;
+            top:0;
+            left:0;
+            background-color:rgba(72, 204, 11, 0.67);
+            color:white;
+            padding:20px;
+            min-height:50px;
+        }
+        #form{
+            position:fixed;
+            top:200px;
+            left:10px;
+        }
+        #controls{
+            position:fixed;
+            bottom:0;
+            left:0;
+        }
+    </style>   
+    <script>
+        function rand(min, max) {
+            min = parseInt(min, 10);
+            max = parseInt(max, 10);
+
+            if (min > max) {
+                var tmp = min;
+                min = max;
+                max = tmp;
+            }
+
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+        var game;
+        var ui;
+        window.addEventListener("load", function () {
+            var scene = new THREE.Scene();
+            var szerokosc = window.innerWidth
+            var wysokosc = window.innerHeight
+            var camera = new THREE.PerspectiveCamera(
+            45, // kąt patrzenia kamery (FOV - field of view)
+            szerokosc / wysokosc, // proporcje widoku, powinny odpowiadać proporjom naszego ekranu przeglądarki
+            0.1, // minimalna renderowana odległość
+            10000 // maxymalna renderowana odległość
+            );
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(0x000000);
+            renderer.setSize(szerokosc, wysokosc);
+
+            document.getElementById("divRender").appendChild(renderer.domElement);
+
+            camera.position.x = 400;
+            camera.position.y = 100;
+            camera.position.z = 0;
+
+            camera.lookAt(scene.position);
+
+            
+            function Fire() {
+                var material = new THREE.MeshBasicMaterial({
+                color: 0xff6600,
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false,
+                wireframe:false,
+                blending: THREE.AdditiveBlending // kluczowy element zapewniający mieszanie kolorów poszczególnych cząsteczek
+            });
+                var particles = []
+                function generate(ilosc) {
+                    while (particles.length) {
+                        scene.remove(particles.shift())
+                    }
+                    for (var i = 0 ; i < ilosc; i++) {
+                        var size = rand(1, 5) * 2
+                        var particle = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), material.clone())
+                        particle.position.set(0, 0, 0);
+                        scene.add(particle)
+                        particles.push(particle)
+                    }
+
+                }
+                generate(50)
+
+                var rIle = document.getElementById("rIle");
+                var rSpeed = document.getElementById("rSpeed");
+                var rWidth = document.getElementById("rWidth");
+                var rHeight = document.getElementById("rHeight");
+                rIle.oninput = function () {
+                    generate(this.value)
+                }
+
+                function update(speed, width, height) {
+                    for (var i = 0; i < particles.length; i++) {
+                        if (particles[i].position.y < height) {
+                            particles[i].position.y += rand(1, speed);
+                            particles[i].material.opacity -= 1 / height;
+                        }
+                        else {
+                            particles[i].material.opacity = 1;
+                            particles[i].position.y = 0;
+                            particles[i].position.x = rand(-width / 2, width / 2)
+                            particles[i].position.z = rand(-width / 2, width / 2)
+                        }
+                        if (particles[i].position.y > height / 2) {
+                            if (particles[i].position.x > 0)
+                                particles[i].position.x -= 0.3
+                            else
+                                particles[i].position.x += 0.3
+                            if (particles[i].position.z > 0)
+                                particles[i].position.z -= 0.3
+                            else
+                                particles[i].position.z += 0.3
+                        }
+                    }
+                }
+
+                this.generate = function (val) {
+                    generate(val);
+                }
+                this.update = function (speed, width, height) {
+                    update(speed, width, height);
+                }
+            }
+            var f = new Fire();
+
+            function animateScene() {
+                f.update(rSpeed.value, rWidth.value, rHeight.value);
+
+                camera.updateProjectionMatrix();
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateScene);
+            }
+
+            animateScene();
+
+            
+
+        })
+    </script>
+</head>
+<body> 
+    <div id="divRender"></div>
+    <div id="controls">
+        <label>Ilosc:<input id="rIle" type="range" min="1" max="200" step="1" value="50"/></label>
+        <label>Szybkosc:<input id="rSpeed" type="range" min="1" max="10" step="0.0000001" value="2" /></label>
+        <label>Szerokość:<input id="rWidth" type="range" min="1" max="200" step="1" value="50" /></label>
+        <label>Wysokość:<input id="rHeight" type="range" min="1" max="200" step="1" value="50" /></label>
+    </div>
+</body>
+</html>
