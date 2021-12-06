@@ -1,6 +1,6 @@
 # Fire three.js
 
-Fire generator made with three.js.
+Fire generator made with three.js for a secondary school course.
 
 ![obraz](https://cdn.discordapp.com/attachments/184368820922744832/917495558875279380/ezgif.com-gif-maker.gif)
 
