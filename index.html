@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title></title>
-	<meta charset="utf-8" />
+    <meta charset="utf-8" />
     <script src="libs/three.js"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
-    <link href="style.css" rel="stylesheet" /> 
+    <link href="style.css" rel="stylesheet" />
     <style>
-        #info{
-            width:100%;
-            position:fixed;
-            top:0;
-            left:0;
-            background-color:rgba(72, 204, 11, 0.67);
-            color:white;
-            padding:20px;
-            min-height:50px;
+        #info {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(72, 204, 11, 0.67);
+            color: white;
+            padding: 20px;
+            min-height: 50px;
         }
-        #form{
-            position:fixed;
-            top:200px;
-            left:10px;
+
+        #form {
+            position: fixed;
+            top: 200px;
+            left: 10px;
         }
-        #controls{
-            position:fixed;
-            bottom:0;
-            left:0;
+
+        #controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
         }
-    </style>   
+    </style>
     <script>
         function rand(min, max) {
             min = parseInt(min, 10);
@@ -48,10 +50,11 @@
             var szerokosc = window.innerWidth
             var wysokosc = window.innerHeight
             var camera = new THREE.PerspectiveCamera(
-            45, // kąt patrzenia kamery (FOV - field of view)
-            szerokosc / wysokosc, // proporcje widoku, powinny odpowiadać proporjom naszego ekranu przeglądarki
-            0.1, // minimalna renderowana odległość
-            10000 // maxymalna renderowana odległość
+                45, // kąt patrzenia kamery (FOV - field of view)
+                szerokosc /
+                wysokosc, // proporcje widoku, powinny odpowiadać proporjom naszego ekranu przeglądarki
+                0.1, // minimalna renderowana odległość
+                10000 // maxymalna renderowana odległość
             );
 
             var renderer = new THREE.WebGLRenderer();
@@ -66,22 +69,24 @@
 
             camera.lookAt(scene.position);
 
-            
+
             function Fire() {
                 var material = new THREE.MeshBasicMaterial({
-                color: 0xff6600,
-                transparent: true,
-                opacity: 0.5,
-                depthWrite: false,
-                wireframe:false,
-                blending: THREE.AdditiveBlending // kluczowy element zapewniający mieszanie kolorów poszczególnych cząsteczek
-            });
+                    color: 0xff6600,
+                    transparent: true,
+                    opacity: 0.5,
+                    depthWrite: false,
+                    wireframe: false,
+                    blending: THREE
+                        .AdditiveBlending // kluczowy element zapewniający mieszanie kolorów poszczególnych cząsteczek
+                });
                 var particles = []
+
                 function generate(ilosc) {
                     while (particles.length) {
                         scene.remove(particles.shift())
                     }
-                    for (var i = 0 ; i < ilosc; i++) {
+                    for (var i = 0; i < ilosc; i++) {
                         var size = rand(1, 5) * 2
                         var particle = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), material.clone())
                         particle.position.set(0, 0, 0);
@@ -105,8 +110,7 @@
                         if (particles[i].position.y < height) {
                             particles[i].position.y += rand(1, speed);
                             particles[i].material.opacity -= 1 / height;
-                        }
-                        else {
+                        } else {
                             particles[i].material.opacity = 1;
                             particles[i].position.y = 0;
                             particles[i].position.x = rand(-width / 2, width / 2)
@@ -144,18 +148,20 @@
 
             animateScene();
 
-            
+
 
         })
     </script>
 </head>
-<body> 
+
+<body>
     <div id="divRender"></div>
     <div id="controls">
-        <label>Ilosc:<input id="rIle" type="range" min="1" max="200" step="1" value="50"/></label>
+        <label>Ilosc:<input id="rIle" type="range" min="1" max="200" step="1" value="50" /></label>
         <label>Szybkosc:<input id="rSpeed" type="range" min="1" max="10" step="0.0000001" value="2" /></label>
         <label>Szerokość:<input id="rWidth" type="range" min="1" max="200" step="1" value="50" /></label>
         <label>Wysokość:<input id="rHeight" type="range" min="1" max="200" step="1" value="50" /></label>
     </div>
 </body>
+
 </html>
